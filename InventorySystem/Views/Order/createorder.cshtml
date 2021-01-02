@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewBag.Title = "create";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+@section Head{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#btnsave').hide();
+            $('#ddlStatus').hide();
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Product',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlproduct').append('<option value=' + value.ID + '>' + value.Product_Name + '</option>');
+                    });
+
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $('#btnCreate').click(function () {
+                $('#btnsave').show();
+                $('#ddlStatus').show();
+                $('#btnCreate').hide();
+            });
+
+
+            $('#btnsave').click(function () {
+                debugger;
+                var id = @ViewBag.ID;
+                var C_Name = $('#cusName').val();
+                var C_Address = $('#cusAdd').val();
+                var C_Phone = $('#cusphone').val();
+                var Pro = $('#ddlproduct').val();
+                var P_qty = $('#qty').val();
+                var P_amount = $('#amount').val();
+                var G_amout = $('#Gross').val();
+                //var S_char = $('#SChar').val();
+                var vat = $('#vat').val();
+                var Dist = $('#disc').val();
+                var N_amount = $('#Namount').val();
+                var stats = $('#ddlsts').val();
+                var bill;
+                var datastring = {
+                    'Customer_Name': C_Name,
+                    'Customer_Address': C_Address,
+                    'Customer_Phone': C_Phone,
+                    'Product_id': Pro,
+                    'qty': P_qty,
+                    'Amount': P_amount,
+                    'Gross_Amount': G_amout,
+                    'Vat': vat,
+                    'Discount': Dist,
+                    'Net_Amount': N_amount,
+                    'Status': stats,
+                    'ID': id,
+                    'Pill_NO': bill,
+                };
+                
+                if (id == 0) {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/api/Order',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            window.location = ("@Url.Action("Manage_Ordedr", "Order")");
+
+                        },
+                        error: function (error) {
+                            debugger;
+                            $("#faild").modal('show');
+                        }
+
+                    });
+                } else {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/Order/Update',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                           window.location = ("@Url.Action("Manage_Ordedr", "Order")");
+                        }
+                    });
+                }
+            });
+            var id = @ViewBag.ID;
+            if (id != '') {
+                $.ajax({
+                type: 'Get',
+                    url: '/WebApi/api/Order/load?ID=' +@ViewBag.ID,
+                dataType: 'json',
+                    success: function (data) {
+                        $("#cusName").val(data.Customer_Name);
+                        $("#cusAdd").val(data.Customer_Address);
+                        $("#cusphone").val(data.Customer_Phone);
+                        $("#ddlproduct").val(data.Product_id);
+                        $("#qty").val(data.qty);
+                        $("#amount").val(data.Amount);
+                        $("#Gross").val(data.Gross_Amount);
+                        $("#vat").val(data.Vat);
+                        $("#disc").val(data.Discount);
+                        $("#Namount").val(data.Net_Amount);
+                        $("#ddlsts").val(data.Status);
+                    },
+                    error: function (error) {
+                        debugger;
+                        $("#faild").modal('show');
+                    }
+                });
+            }
+
+        });
+
+        function myFunction() {
+            debugger;
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Product/load?ID=' + 1,
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    $("#qty").val(1);
+                    $("#amount").val(data.Price);
+                    $("#Gross").val(data.Price);
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Company/Load?ID=' + 1,
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    //$("#vat").val(data.Vat_Charge);
+                    if (data.Charge_Amount != '') {
+                        debugger;
+                        $('#charg').show();
+                        var z = $("#amount").val();
+                        var a = data.Charge_Amount;
+                        var v = data.Vat_Charge;
+                        var x = z * a / 100;
+                        var c = z * v / 100;
+                        $('#SChar').val(x);
+                        $("#vat").val(c);
+                    } else {
+                        $('#charg').hide();
+                    }
+
+                    var dis = $("#disc").val();
+                    if (dis == '') {
+                        debugger;
+                        var m = parseFloat($("#Gross").val());
+                        var n = parseFloat( $('#SChar').val());
+                        var l = parseFloat( $("#vat").val());
+                        var total = (m + n + l);
+                        var to = total.toFixed();
+                        $("#Namount").val(to);
+                    }
+
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+        }
+
+        function fun() {
+            debugger;
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Product/load?ID=' + 1,
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    var z = data.QTY;
+                    var y = $("#qty").val();
+
+                    if (y <= z) {
+                        var t = $("#amount").val();
+                        var a = t * y;
+                        $("#amount").val(a);
+                        var Namount = $("#amount").val();
+                        $("#Gross").val(a);
+                        var Ovat = $("#vat").val();
+                        var Ochar = $('#SChar').val();
+                        var c = Ovat * y;
+                        var x = Ochar * y;
+                        $("#vat").val(c);
+                        $("#SChar").val(x);
+                        var Nvat = $("#vat").val();
+                        var Nchar = $("#SChar").val();
+
+                        $('#SChar').val(Nchar);
+                        $("#vat").val(Nvat);
+
+                        var parsAmount = parseFloat(Namount);
+                        var parsChar = parseFloat(Nchar);
+                        var parsVat = parseFloat(Nvat);
+                        var Ntotal = (parsAmount + parsChar + parsVat);
+                        $("#Namount").val(Ntotal);
+
+                    }
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+        }
+        function Discount() {
+            var dis = $("#disc").val();
+            var tot = $("#Namount").val();
+
+            var Ntot = parseFloat( tot - dis);
+            $("#Namount").val(Ntot);
+        }
+
+    </script>
+
+}
+
+
+
+
+@section Body{
+    <input type="hidden" value="" id="Ord" />
+    <div class="container pull-left" style="margin-left:40px">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h3>Manage <small>Orders</small></h3></div>
+        </div>
+    </div>
+
+    <div class="container ContainerBody" style="margin-top:120px">
+        <div class="modal-body">
+            <form>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <h4>Add Order</h4>
+                    </div>
+                </div>
+            </form>
+            <form style="margin-top:100px">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label for="cusName">Customer Name</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <input placeholder="Enter Customer Name" required type="text" id="cusName" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:15px">
+                    <div class="col-lg-3">
+                        <label for="cusAdd">Customer Address</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <input placeholder="Enter Customer Address" required type="text" id="cusAdd" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:15px">
+                    <div class="col-lg-3">
+                        <label for="cusphone">Customer Phone</label>
+                    </div>
+                    <div class="col-lg-9">
+                        <input placeholder="Enter Customer Phone" required type="text" id="cusphone" />
+                    </div>
+                </div>
+            </form>
+            <form>
+                <div class="row" style="margin-top:70px">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group" style="float:left">
+                            <label for="ddlproduct">Product</label>
+                            <select style="width:400px" class="form-control" onchange="myFunction()" id="ddlproduct"><option></option></select>
+                        </div>
+                        <div class="form-group" style="float:left; margin-left:5px;">
+                            <label for="qty">Qty</label>
+                            <input class="form-control" onblur="fun()" id="qty" />
+                        </div>
+                        <div class="form-group" style="float:left; margin-left:5px;">
+                            <label for="amount">Amount</label>
+                            <input class="form-control" id="amount" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form style="margin-top:100px">
+                <div class="pull-right">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label for="Gross">Gross Amount</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <input required type="text" id="Gross" />
+                        </div>
+                    </div>
+                    <div class="row" id="charg">
+                        <div class="col-lg-4">
+                            <label for="SChar">S-Charge</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <input required type="text" id="SChar" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:15px">
+                        <div class="col-lg-4">
+                            <label for="vat">Vat</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <input required type="text" id="vat" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:15px">
+                        <div class="col-lg-4">
+                            <label for="disc">Discount</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <input required type="text" onblur="Discount()" id="disc" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:15px">
+                        <div class="col-lg-4">
+                            <label for="Namount">Net Amount</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <input required type="text" id="Namount" />
+                        </div>
+                    </div>
+
+
+                    <div class="row" style="margin-top:15px" id="ddlStatus">
+                        <div class="col-lg-4">
+                            <label for="ddlproduct">Paid Status</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <select id="ddlsts">
+                                <option value="Paid">Paid</option>
+                                <option value="UnPaid">UnPaid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="modal-footer pull-left" style="margin-top:100px">
+                            <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            <button type="button" class="btn btn-primary" id="btnCreate">Create Order</button>
+                            <button type="button" class="btn btn-warning btn-sm" id="bak_btn">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+}

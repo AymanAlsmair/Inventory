@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewBag.Title = "manage";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Country',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlCount').append('<option value=' + value.ID + '>' + value.Name + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Currency',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlCurenc').append('<option value=' + value.ID + '>' + value.Name + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $('#btnsave').click(function () {
+                debugger;
+                var Copany_Name = $('#comName').val();
+                var Char_amount = $('#Chamount').val();
+                var V_charge = $('#Vchar').val();
+                var Address = $('#addrss').val();
+                var Phone = $('#phone').val();
+                var Country = $('#ddlCount').val();
+                var Message = $('#Mssg').val();
+                var Currency = $('#ddlCurenc').val();
+
+                var datastring = {
+                    'Company_Name': Copany_Name,
+                    'Charge_Amount': Char_amount,
+                    'Vat_Charge': V_charge,
+                    'Address': Address,
+                    'Phone': Phone,
+                    'Country_id': Country,
+                    'Message': Message,
+                    'Currency_id': Currency,
+                };
+
+                $.ajax({
+                    type: 'Post',
+                    url: '/WebApi/api/company',
+                    data: JSON.stringify(datastring),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function () {
+                        debugger;
+                        $("#Brand").modal('hide');
+                        window.setTimeout(function () {
+                            $("#success").modal('show');
+                        }, 5000);
+                        //$("#success").modal('show');
+
+                    },
+                    error: function (error) {
+                        debugger;
+                        $("#faild").modal('show');
+                    }
+
+                });
+
+            });
+
+
+        });
+
+    </script>
+
+}
+
+
+@section Body{
+
+    <div class="container pull-left" style="margin-left:40px">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h3>Manage <small>Company</small></h3></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="success">
+                    <strong> Successfully created </strong>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-danger alert-dismissable" style="display:none" id="faild">
+                    <strong> Failed created </strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container ContainerBody" style="margin-top:120px">
+        <div class="modal-body">
+            <h4>Manage Company Information</h4>
+            <form style="margin-top:50px">
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="comName">Company Name</label>
+                            <input class="form-control" placeholder="Infosys Private" required type="text" id="comName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="Chamount">Charge Amount (%)</label>
+                            <input class="form-control" placeholder="Enter Charge Amount" required type="text" id="Chamount" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="Vchar">Vat Charge (%)</label>
+                            <input class="form-control" required type="text" id="Vchar" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="addrss">Address</label>
+                            <input class="form-control" required type="text" id="addrss" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input class="form-control" required type="text" id="phone" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="ddlCount">Country</label>
+                            <select id="ddlCount" class="form-control">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="Mssg">Message</label>
+                            <textarea class="form-control" rows="5" id="Mssg" placeholder="Enter Description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="ddlCurenc">Currency</label>
+                            <select id="ddlCurenc" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="modal-footer pull-left">
+                            <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+}
+
+

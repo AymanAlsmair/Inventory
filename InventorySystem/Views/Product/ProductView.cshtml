@@ -1,0 +1,349 @@
+﻿
+@{
+    ViewBag.Title = "ProductView";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#fileUpload").change(function () {
+                debugger;
+                var files = $(this)[0].files;
+                var formData = new FormData();
+                formData.append(files[0].name, files[0]);
+                $.ajax({
+                    url: "/WebApi/api/Product/UploadFiles",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        debugger;
+                        $("#imgProfilePhoto").attr("src", "/InventorySystem/InventoryTaskWebApi" + data);
+                    },
+                    error: function (data) {
+                        alert("Upload Faild");
+                    }
+                });
+            });
+
+
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/AttributeValue/?ID=' + 1,
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#clr').append('<option value=' + value.ID + '>' + value.Att_Nae + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/AttributeValue/?ID=' + 2,
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlsize').append('<option value=' + value.ID + '>' + value.Att_Nae + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Brand',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlbrand').append('<option value=' + value.ID + '>' + value.Brand_Name + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Category',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlcateg').append('<option value=' + value.ID + '>' + value.Category_Name + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Store',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#ddlstor').append('<option value=' + value.ID + '>' + value.Store_Name + '</option>');
+                    });
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+
+
+            $('#btnsave').click(function () {
+                debugger;
+                var id = @ViewBag.ID;
+
+                    
+                    var Product_Name = $('#ProName').val();
+                    var SKU = $('#SKU').val();
+                    var Price = $('#Pric').val();
+                    var QTY = $('#Qty').val();
+                    var Description = $('#txt_Desc').val();
+                    var Color = $('#clr').val();
+                    var Size = $('#ddlsize').val();
+                    var Brand = $('#ddlbrand').val();
+                    var Category = $('#ddlcateg').val();
+                    var Store = $('#ddlstor').val();
+                    var Availabil = $('#avabl').val();
+
+                    var datastring = {
+                        'Product_Name': Product_Name,
+                        'SKU': SKU,
+                        'Price': Price,
+                        'QTY': QTY,
+                        'Description': Description,
+                        'color_id': Color,
+                        'Size_id': Size,
+                        'Brand_id': Brand,
+                        'category_id': Category,
+                        'stor_id': Store,
+                        'Availability': Availabil,
+                        'ID': id,
+                        'ImagePath': $("#imgProfilePhoto").attr("src"),
+                    };
+
+                if (id == 0) {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/api/Product',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            $("#Brand").modal('hide');
+                            $("#success").modal('show');
+                            window.setTimeout(function () {
+                                $("#success").modal('hide');
+                            }, 5000);
+                            //$("#success").modal('show');
+                            window.location = ("@Url.Action("Manage_Product", "Product")");
+
+                        },
+                        error: function (error) {
+                            debugger;
+                            $("#faild").modal('show');
+                        }
+
+                    });
+                } else {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/Product/Update',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                           window.location = ("@Url.Action("Manage_Product", "Product")");
+                        }
+                    });
+                }
+                
+
+            });
+
+            var id = @ViewBag.ID;
+            if (id != '') {
+                $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Product/load?ID=' +@ViewBag.ID,
+                dataType: 'json',
+                    success: function (data) {
+                        debugger;
+                        $("#ProName").val(data.Product_Name);
+                        $("#SKU").val(data.SKU);
+                        $("#Pric").val(data.Price);
+                        $("#Qty").val(data.QTY);
+                        $("#txt_Desc").val(data.Description);
+                        $("#clr").val(data.color_id);
+                        $("#ddlsize").val(data.Size_id);
+                        $("#ddlbrand").val(data.Brand_id);
+                        $("#ddlcateg").val(data.category_id);
+                        $("#ddlstor").val(data.stor_id);
+                        $("#avabl").val(data.Availability);
+                        $("#imgProfilePhoto").attr("src",  data.ImagePath);
+                        //$("#imgProfilePhoto").val(data.ImagePath);
+                    },
+                    error: function (error) {
+                        debugger;
+                        $("#faild").modal('show');
+                    }
+                });
+            }
+            
+
+            
+        });
+
+    </script>
+
+
+}
+
+@section Body{
+
+    <input type="hidden" value="" id="Pedit" class="Pedit" />
+    <div class="container pull-left" style="margin-left:40px">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h3>Manage <small>Products</small></h3></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="success">
+                    <strong> Successfully created </strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container ContainerBody" style="margin-top:120px">
+        <div class="modal-body">
+            <h4>Add Product</h4>
+            <form style="margin-top:30px">
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <input type="file" class="btn btn-primary btn-sm float-left" style="width:200px;display:inline-block;" id="fileUpload" name="picture"/>
+                        </div>
+                        <div>
+                            <img id="imgProfilePhoto" style="width:150px; height:150px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="ProName">Product Name</label>
+                            <input class="form-control" placeholder="Enter Product Name" required type="text" id="ProName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="SKU">SKU</label>
+                            <input class="form-control" placeholder="Enter SKU" required type="text" id="SKU" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="Pric">Price</label>
+                            <input class="form-control" placeholder="Enter Price" required type="text" id="Pric" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="Qty">Qty</label>
+                            <input class="form-control" placeholder="Enter Qty" required type="text" id="Qty" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="txt_Desc">Description</label>
+                            <textarea class="form-control" rows="5" id="txt_Desc" placeholder="Enter Description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="clr">Color</label>
+                            <select class="form-control" id="clr"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="size">Size</label>
+                            <select class="form-control" id="ddlsize"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="brand">Brands</label>
+                            <select class="form-control" id="ddlbrand"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="categ">Category</label>
+                            <select class="form-control" id="ddlcateg"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="stor">Store</label>
+                            <select class="form-control" id="ddlstor"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="avabl">Availability</label>
+                            <input class="form-control" required type="text" id="avabl" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="modal-footer pull-left">
+                            <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            <button type="button" class="btn btn-warning btn-sm" id="bak_btn">Back</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+}
+

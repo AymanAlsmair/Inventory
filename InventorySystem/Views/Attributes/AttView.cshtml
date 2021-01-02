@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "AttView";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+
+@section Head{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            debugger;
+            $("#btnShowModal").click(function () {
+                debugger;
+                $("#Attributes").modal('show');
+                //$(".modal-backdrop").remove();
+            });
+
+            $("#btnClose").click(function () {
+                $("#Attributes").modal('hide');
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Attributes',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.attVM.ATTRIBUTE_Name + "</td><td>" + value.count + "</td><td>" + value.attVM.Status + "</td><td><button id='btn_val' type='button'onclick='Go_val(" + value.attVM.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-plus'></span>Add Value</button><button type='button' id='edit_brand' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+                },
+                error: function (error) {
+                    debugger;
+                    $("#faild").modal('show');
+                }
+            });
+            
+        });
+
+        function Go_val(ID) {
+            debugger;
+            window.location = ("@Url.Action("Index/ID", "AttributeValue")".replace("ID", ID));
+        }
+    </script>
+}
+
+
+
+
+
+@section Body{
+    <div class="container" style="margin-left: 43px;">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h1>Manage <small>Attributes</small></h1></div>
+        </div>
+        <div style="display:none">Successfully created</div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnShowModal" data-toggle="model">Add Attribute</button>
+                <div class="modal fade" data-keyboard="false" data-backdrop="static" id="Attributes" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add Attributes</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="SName">Attributes Name</label>
+                                        <input class="form-control" placeholder="Enter Attributes Name" required type="text" id="SName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control">
+                                            <option>Active</option>
+                                            <option>InActive</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="btnClose">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container ContainerBody" style="margin-top:20px">
+
+        <div class="row">
+            <div class="col-lg-12 col-xs-12 containerHeader ">
+                Manage Attributes
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <table class="GridList" id="as">
+                    <tbody id="tableItems">
+                        <tr>
+                            <td>Attributes Name</td>
+                            <td>Total Value</td>
+                            <td>Status</td>
+                            <td>Actions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+

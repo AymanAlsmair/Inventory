@@ -1,0 +1,210 @@
+﻿
+@{
+    ViewBag.Title = "AttValue";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger;
+            $("#btnShowModal").click(function () {
+                debugger;
+                $("#AtVal").modal('show');
+                $('#AVName').val('');
+            });
+
+            $("#btnClose").click(function () {
+                $("#AtVal").modal('hide');
+                
+            });
+
+            $('#btnsave').click(function () {
+                debugger;
+                var valname = $('#AVName').val();
+                ATNval = @ViewBag.ID;
+                var ID = $('#vedit').val();
+                var datastring = {
+                    'Att_Nae': valname,
+                    'att_id': ATNval,
+                    'ID': ID,
+                };
+                if ($('#vedit').val() == "") {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/api/AttributeValue',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            $("#AtVal").modal('hide');
+                            window.setTimeout(function () {
+                                $("#success").modal('show');
+                            }, 5000);
+                            //$("#success").modal('show');
+                            $.each(data, function (key, value) {
+                                $('#tableItems').append("<tr id='tr'><td>" + value.Att_Nae + "</td><td><button type='button' id='edit_val' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_val' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                            });
+
+                        },
+                        error: function (error) {
+                            debugger;
+                            $("#AtVal").modal('hide');
+                            $("#faild").modal('show');
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/AttributeValue/Update',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            $("#AtVal").modal('hide');
+                            window.setTimeout(function () {
+                                $("#success").modal('show');
+                            }, 5000);
+                            //$("#success").modal('show');
+                            $.each(data, function (key, value) {
+                                $('#tableItems').append("<tr id='tr'><td>" + value.Att_Nae + "</td><td><button type='button' id='edit_val' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_val' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+                            });
+                        }
+                    });
+                }
+                
+
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/AttributeValue/?ID=' +@ViewBag.ID,
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.Att_Nae + "</td><td><button type='button' id='edit_val' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_val' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+                },
+                error: function (error) {
+                    debugger;
+                    $("#faild").modal('show');
+                }
+            });
+
+        });
+        function Del(ID) {
+            debugger;
+            $.ajax({
+                type: 'Post',
+                url: '/WebApi/api/AttributeValue/delete?ID=' + ID,
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.Att_Nae + "</td><td><button type='button' id='edit_val' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_val' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+
+                    $("#Del_succ").modal('show');
+                }
+            });
+
+        }
+
+        function Edit(ID) {
+            debugger;
+            $('#vedit').val(ID);
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/AttributeValue/load?ID=' + ID,
+                dataType: 'json',
+                success: function (data) {
+                    $("#AtVal").modal('show');
+                    $("#AVName").val(data.Att_Nae);
+                }
+            });
+        }
+
+    </script>
+    }
+
+
+@section Body{
+
+    <input type="hidden" value="" id="vedit" class="vedit" />
+    <div class="container" style="margin-left: 43px;">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h1>Manage Attributes <small>Value</small></h1></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="success">
+                    <strong> Successfully created </strong>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-danger alert-dismissable" style="display:none" id="faild">
+                    <strong> Failed created </strong>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="Del_succ">
+                    <strong> Deleted Successfully </strong>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:50px">
+            <div class="col-lg-12 col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnShowModal" data-toggle="model">Add Value</button>
+                <div class="modal fade" data-keyboard="false" data-backdrop="static" id="AtVal" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add Attributes Value</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="AVName">Attributes Value</label>
+                                        <input class="form-control" placeholder="Enter Attributes Value" required type="text" id="AVName" />
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="btnClose">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container ContainerBody" style="margin-top:20px">
+
+        <div class="row">
+            <div class="col-lg-12 col-xs-12 containerHeader ">
+                Manage Attributes Value
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <table class="GridList" id="as">
+                    <tbody id="tableItems">
+                        <tr>
+                            <td>Attributes Value</td>
+                            <td>Actions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

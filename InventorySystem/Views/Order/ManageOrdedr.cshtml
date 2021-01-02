@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "ManageOrdedr";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            debugger;
+            $("#btnShowModal").click(function () {
+                debugger;
+                $("#ordr").modal('show');
+                //$(".modal-backdrop").remove();
+            });
+
+            $("#btnClose").click(function () {
+                $("#ordr").modal('hide');
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Order',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.Pill_NO + "</td><td>" + value.Customer_Name + "</td><td>" + value.Customer_Phone + "</td><td> 1 </td><td>" + value.Net_Amount + "</td><td>" + value.Status + "</td><td><button type='button' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button'  onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+                    });
+                },
+                error: function (error) {
+                    debugger;
+                    $("#faild").modal('show');
+                }
+            });
+
+        });
+        //var today = new Date();
+        //var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + ' ' + today.getHours() + ':' + today.getMinutes();
+        //document.getElementById("time").innerHTML = date;
+
+        function Edit(ID) {
+            debugger;
+            //$('#Pedit').val(ID);
+            window.location = ("@Url.Action("Index/ID" , "Order")".replace("ID",ID));
+        }
+
+        function Del(ID) {
+            debugger;
+            $.ajax({
+                type: 'Post',
+                url: '/WebApi/api/Order/delete?ID=' + ID,
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (data) {
+                    $("#Del_succ").modal('show');
+                }
+            });
+
+        }
+    </script>
+}
+
+@section Body{
+
+    <div class="container" style="margin-left: 43px;">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h1>Manage <small>Orders</small></h1></div>
+        </div>
+        <div style="display:none">Successfully created</div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnShowModal" data-toggle="model">Add Orders</button>
+                <div class="modal fade" data-keyboard="false" data-backdrop="static" id="ordr" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add Orders</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="ordName">Orders Name</label>
+                                        <input class="form-control" placeholder="Enter Orders Name" required type="text" id="ordName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control">
+                                            <option>Active</option>
+                                            <option>InActive</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="btnClose">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container ContainerBody" style="margin-top:20px">
+
+        <div class="row">
+            <div class="col-lg-12 col-xs-12 containerHeader ">
+                Manage Orders
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <table class="GridList">
+                    <tbody id="tableItems">
+                        <tr>
+                            <td>Bill No</td>
+                            <td>Customer Name</td>
+                            <td>Customer Phone</td>
+                            @*<td>Date Time</td>*@
+                            <td>Total Products</td>
+                            <td>Total Amount</td>
+                            <td>Paid Status</td>
+                            <td>Actions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

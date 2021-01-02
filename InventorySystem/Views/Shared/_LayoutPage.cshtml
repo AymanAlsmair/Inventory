@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/style2.css" rel="stylesheet" />
+
+    <title>_LayoutPage</title>
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+
+    @RenderSection("Head", false)
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header" style="float: left; width: 250px;">
+                <h4>Inventory System </h4>
+            </div>
+            <ul class="list-unstyled components" style="position: relative; top: 50px;">
+                <li>
+                    <a href=""><i class="glyphicon glyphicon-tags"></i> Brands  </a>
+                </li>
+                <li>
+                    <a href=""><i class="glyphicon glyphicon-duplicate"></i> Category  </a>
+                </li>
+                <li>
+                    <a href=""><i class="glyphicon glyphicon-duplicate"></i> Stores  </a>
+                </li>
+                <li>
+                    <a href=""><i class="glyphicon glyphicon-duplicate"></i> Attributes </a>
+                </li>
+                <li>
+                    <a href="#Products" class="dropdown-toggle" data-toggle="collapse"><i class="glyphicon glyphicon-triangle-bottom"></i> Products</a>
+                    <ul class="collapse list-unstyled" id="Products">
+                        <li>
+                            <a href="#"><i class="glyphicon glyphicon-plus"></i> Add Products</a>
+                            <a href="#"><i class="glyphicon glyphicon-edit"></i> Manage Products </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#Orders" class="dropdown-toggle" data-toggle="collapse"><i class="glyphicon glyphicon-triangle-bottom"></i> Orders</a>
+                    <ul class="collapse list-unstyled" id="Orders">
+                        <li>
+                            <a href="#"><i class="glyphicon glyphicon-plus"></i> Add Orders</a>
+                            <a href="#"><i class="glyphicon glyphicon-edit"></i> Manage Orders </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href=""><i class="glyphicon glyphicon-duplicate"></i> Company </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content" style="padding:0px">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                @*bg-light*@
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <button type="button" id="sidebarCollapse" class="btn  bg-light ">
+                                <i class="glyphicon glyphicon-list"></i>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="col-xs-offset-7 col-lg-offset-8 col-xs-2">
+                            <div class="dropdown" style="width:100px; color : white;padding-top:5px">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="width:120PX">
+                                    <i class="glyphicon glyphicon-triangle-bottom"></i>Account
+                                </a>
+                                <ul class="dropdown-menu AccountSubMenu">
+                                    <li>
+                                        <a href="#">LogOut</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </nav>
+            @RenderSection("Body")
+        </div>
+    </div>
+</body>
+@*<script src="~/Content/fontawesome.js"></script>*@
+@*<script src="~/Content/solid.js"></script>*@
+
+@*<script src="~/Content/jquery-3.3.1.slim.min.js"></script>*@
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/jquery.mCustomScrollbar.concat.min.js"></script>
+@*<script src="~/Content/popper.min.js"></script>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar, #content').toggleClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+</script>
+</html>

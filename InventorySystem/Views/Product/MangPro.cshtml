@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "MangPro";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            debugger;
+            $("#btnShowModal").click(function () {
+                debugger;
+                $("#Produc").modal('show');
+                //$(".modal-backdrop").remove();
+            });
+
+            $("#btnClose").click(function () {
+                $("#Produc").modal('hide');
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Product',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.ImagePath + "</td><td>" + value.SKU + "</td><td>" + value.Product_Name + "</td><td>" + value.Price + "</td><td>" + value.QTY + "</td><td>" + value.stor_id + "</td><td>" + value.Availability + "</td><td><button type='button' id='edit_brand' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+                },
+                error: function (error) {
+                    debugger;
+                    $("#faild").modal('show');
+                }
+            });
+
+
+        });
+
+        function Edit(ID) {
+            debugger;
+            //$('#Pedit').val(ID);
+            window.location = ("@Url.Action("Index/ID" , "Product")".replace("ID",ID));
+        }
+
+        function Del(ID) {
+            debugger;
+            $.ajax({
+                type: 'Post',
+                url: '/WebApi/api/Product/delete?ID=' + ID,
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (data) {
+                    $("#Del_succ").modal('show');
+                }
+            });
+
+        }
+
+
+    </script>
+}
+
+@section Body{
+    @*<input type="hidden" value="" id="Pedit" class="Bedit" />*@
+    <div class="container" style="margin-left: 43px;">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h1>Manage <small>Products</small></h1></div>
+        </div>
+        <div style="display:none">Successfully created</div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnShowModal" data-toggle="model">Add Products</button>
+                <div class="modal fade" data-keyboard="false" data-backdrop="static" id="Produc" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add Products</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="ProName">Products Name</label>
+                                        <input class="form-control" placeholder="Enter Products Name" required type="text" id="ProName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="form-control">
+                                            <option>Active</option>
+                                            <option>InActive</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="btnClose">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container ContainerBody" style="margin-top:20px">
+
+        <div class="row">
+            <div class="col-lg-12 col-xs-12 containerHeader ">
+                Manage Products
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <table class="GridList" id="as">
+                    <tbody id="tableItems">
+                        <tr>
+                            <td>Image</td>
+                            <td>SKU</td>
+                            <td>Products Name</td>
+                            <td>Price</td>
+                            <td>QTY</td>
+                            <td>Store</td>
+                            <td>Availability</td>
+                            <td>Actions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

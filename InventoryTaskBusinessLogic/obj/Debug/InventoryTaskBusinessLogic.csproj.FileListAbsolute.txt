@@ -1,0 +1,15 @@
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskBusinessLogic.dll
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskBusinessLogic.pdb
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskDataAccess.dll
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\EntityFramework.dll
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskDataAccess.pdb
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskDataAccess.dll.config
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\EntityFramework.xml
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\obj\Debug\InventoryTaskBusinessLogic.csprojAssemblyReference.cache
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\obj\Debug\InventoryTaskBusinessLogic.csproj.CoreCompileInputs.cache
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\obj\Debug\InventoryTaskBusinessLogic.csproj.CopyComplete
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\obj\Debug\InventoryTaskBusinessLogic.dll
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\obj\Debug\InventoryTaskBusinessLogic.pdb
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\InventoryTaskBusinessLogic.dll.config
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\EntityFramework.SqlServer.dll
+C:\inetpub\wwwroot\InventorySystem\InventoryTaskBusinessLogic\bin\Debug\EntityFramework.SqlServer.xml

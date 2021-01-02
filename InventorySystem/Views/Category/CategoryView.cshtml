@@ -1,0 +1,222 @@
+﻿
+@{
+    ViewBag.Title = "CategoryView";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@section Head{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            debugger;
+            $("#btnShowModal").click(function () {
+                debugger;
+                $("#Category").modal('show');
+                $('#CName').val('');
+            });
+
+            $("#btnClose").click(function () {
+                $("#Category").modal('hide');
+            });
+            /////
+            $('#btnsave').click(function () {
+                debugger;
+                var categ = $('#CName').val();
+                var status = $('#ddlstatus').val();
+                var ID = $('#Cedit').val();
+                var datastring = {
+                    'Category_Name': categ,
+                    'Status': status,
+                    'ID': ID,
+                };
+                if ($('#Cedit').val() == "") {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/api/Category',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            $("#Category").modal('hide');
+                            window.setTimeout(function () {
+                                $("#success").modal('show');
+                            }, 5000);
+                            //$("#success").modal('show');
+                            $.each(data, function (key, value) {
+                                $('#tableItems').append("<tr id='tr'><td>" + value.Category_Name + "</td><td>" + value.Status + "</td><td><button type='button' id='edit_cat' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                            });
+
+                        },
+                        error: function (error) {
+                            debugger;
+                            $("#faild").modal('show');
+                        }
+
+                    });
+                } else {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/WebApi/Category/Update',
+                        data: JSON.stringify(datastring),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function () {
+                            debugger;
+                            $("#Category").modal('hide');
+                            window.setTimeout(function () {
+                                $("#success").modal('show');
+                            }, 5000);
+                            //$("#success").modal('show');
+                            $.each(data, function (key, value) {
+                                $('#tableItems').append("<tr id='tr'><td>" + value.Category_Name + "</td><td>" + value.Status + "</td><td><button type='button' id='edit_cat' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                            });
+                        }
+                    });
+                }
+                
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Category',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.Category_Name + "</td><td>" + value.Status + "</td><td><button type='button' id='edit_cat' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+                },
+                error: function (error) {
+                    debugger;
+                    $("#faild").modal('show');
+                }
+            });
+        });
+
+        function Del(ID) {
+            debugger;
+            $.ajax({
+                type: 'Post',
+                url: '/WebApi/api/Category/delete?ID=' + ID,
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#tableItems').append("<tr id='tr'><td>" + value.Brand_Name + "</td><td>" + value.Status + "</td><td><button type='button' id='edit_cat' onclick='Edit(" + value.ID + ")' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-edit'></span></button><button type='button' id='del_brand' onclick='Del(" + value.ID + ")'class='btn btn-default btn-sm'><span class='glyphicon glyphicon-trash'></span></button></td>");
+
+                    });
+
+                    $("#Del_succ").modal('show');
+                }
+            });
+
+        }
+
+        function Edit(ID) {
+            debugger;
+            $('#Cedit').val(ID);
+            $.ajax({
+                type: 'Get',
+                url: '/WebApi/api/Category/Load?ID=' + ID,
+                dataType: 'json',
+                success: function (data) {
+                    $("#Category").modal('show');
+                    $("#CName").val(data.Category_Name);
+                    $("#ddlstatus").val(data.Status);
+                }
+            });
+        }
+
+    </script>
+}
+
+
+
+
+@section Body{
+    <input type="hidden" value="" id="Cedit" class="Cedit" />
+    <div class="container" style="margin-left: 43px;">
+        <div class="row">
+            <div class="col-lg-12 col-xs-12"><h1>Manage <small>Category</small></h1></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="success">
+                    <strong> Successfully created </strong>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-danger alert-dismissable" style="display:none" id="faild">
+                    <strong> Failed created </strong>
+                </div>
+            </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="alert alert-success alert-dismissable" style="display:none" id="Del_succ">
+                    <strong> Deleted Successfully </strong>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:50px">
+            <div class="col-lg-12 col-xs-12">
+                <button type="button" class="btn btn-primary" id="btnShowModal" data-toggle="model">Add Category</button>
+                <div class="modal fade" data-keyboard="false" data-backdrop="static" id="Category" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add Category</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="CName">Category Name</label>
+                                        <input class="form-control" placeholder="Enter Category Name" required type="text" id="CName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="ddlstatus" class="form-control">
+                                            <option value="Active">Active</option>
+                                            <option value="InActive">InActive</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="btnClose">Close</button>
+                                <button type="button" class="btn btn-primary" id="btnsave">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container ContainerBody" style="margin-top:20px">
+
+        <div class="row">
+            <div class="col-lg-12 col-xs-12 containerHeader ">
+                Manage Categories
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <table class="GridList" id="as">
+                    <tbody id="tableItems">
+                        <tr>
+                            <td>Category Name</td>
+                            <td>Status</td>
+                            <td>Actions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
